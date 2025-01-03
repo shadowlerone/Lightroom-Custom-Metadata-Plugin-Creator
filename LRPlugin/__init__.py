@@ -1,35 +1,14 @@
 from pathlib import Path
+import os
 
+with open(f"{os.path.dirname(__file__)}/template.lrplugin/CustomMetadata.lua") as fp:
+	CUSTOM_METADATA_TEMPLATE = fp.read()
 
+with open(f"{os.path.dirname(__file__)}/template.lrplugin/Info.lua") as fp:
+	INFO_LUA_TEMPLATE = fp.read()
 
-CUSTOM_METADATA_TEMPLATE = """
-return {{
-    schemaVersion = {schemaVersion}, -- increment this value any time you make a change to the field definitions below
-	metadataFieldsForPhotos = {{
-		{customMetadata}
-	}}
-}}
-"""
-
-INFO_LUA_TEMPLATE = """
-return {{
-   LrPluginName        = "{name}", -- update the name within quotes to how you want it to appear in the Plugin Manager
-   LrToolkitIdentifier = "{id}",
-   LrSdkVersion        = 2,
-   LrMetadataProvider  = 'CustomMetadata.lua',
-   LrMetadataTagsetFactory = 'Tagset.lua',
-}}
-"""
-
-TAGSET_TEMPLATE = """
-return {{
-	title = "{name}",
-	id= "{id}.Tagset",
-	items = {{
-		'{id}.*'
-	}}
-}}
-"""
+with open(f"{os.path.dirname(__file__)}/template.lrplugin/Tagset.lua") as fp:
+	TAGSET_TEMPLATE = fp.read()
 
 class Value():
 	def __init__(self, value: str, title: str= None):
