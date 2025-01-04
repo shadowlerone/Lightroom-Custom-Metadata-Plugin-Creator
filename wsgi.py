@@ -2,8 +2,9 @@
 import shutil
 import pathlib
 import logging
-
+from pathlib import Path
 import LRPlugin
+import os
 
 # from bottle import route, run, post, request, static_file
 from flask import Flask, request, send_file
@@ -32,10 +33,25 @@ def generate():
 		fp = plugin.export()
 		logging.info("Zipping plugin")
 		zip_name = f"{fp}.zip"
+		logging.info(f"fp: {fp}")
+		logging.info(f"tmp path: {Path("tmp") / Path(fp)}")
+
+		shutil.move(Path(fp), Path("tmp") / Path(fp))
+
+		shutil.move(Path("tmp/tmp"), Path(fp))
+		if Path(zip_name).is_file():
+			os.remove(zip_name)
 		shutil.make_archive(fp, 'zip', fp)
 		logging.info("Sending Plugin")
-		# return static_fi le(zip_name, root="tmp", download=True)
-		response = send_file(path_or_file=zip_name,as_attachment=True)
+
+		response = send_file(path_or_file=zip_name,as_attachment=True, download_name=zip_name)
+		try:
+			shutil.rmtree(fp)
+			os.remove(zip_name)
+		except:
+			pass
+			# logging.exception("Cleanup Failed")
+			# logging.warning("Cleanup failed")
 		return response
 	except:
 		logging.exception("An Error Occurred")

@@ -185,8 +185,10 @@ class Plugin():
 			self.MetadataFields = mfields
 		else:
 			self.MetadataFields = MetadataFields()
+		
+		self.json = None
 
-	def export(self):
+	def export(self) -> Path:
 		plugin_base_path = Path(f"tmp/{self.name}.lrplugin")
 		plugin_base_path.mkdir(parents=True, exist_ok=True)
 		# Write Info.lua
@@ -213,7 +215,11 @@ class Plugin():
 			fp.write(
 				TAGSET_TEMPLATE.format(name = self.name, id=self.id)
 			)
-		return plugin_base_path
+		
+		if self.json and self.json != '':
+			with open(plugin_base_path/"data.json", "w") as fp:
+				fp.write(self.json)
+		return str(plugin_base_path)
 
 	def load(fp:str):
 		with open(fp) as f:
@@ -240,7 +246,7 @@ class Plugin():
 				for v in mf['values']:
 					field.add_value(title=v['title'], value=v['value'])
 			plugin.MetadataFields.add_field(field)
-
+		plugin.json = json.dumps(data)
 		return plugin
 
 
@@ -250,6 +256,4 @@ if __name__ == "__main__":
 	p = Plugin("Test Plugin")
 	p.MetadataFields.add_field(Field("tester", "Testing Field"))
 	p.MetadataFields.add_field(Field("tester2", "Testing Field 2"))
-	# p.MetadataFields.add_field(Field("tester", "Testing Field"))
-	# p.MetadataFields.add_field(Field("tester", "Testing Field"))
 	p.export()
