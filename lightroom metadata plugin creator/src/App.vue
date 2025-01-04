@@ -29,27 +29,31 @@ let data = ref({
 async function downloadFile() {
 	let headers = {
 		// mode: 'cors',
-		cache: 'no-cache'
+		cache: 'no-cache',
+		"Content-Type": "application/json",
 	}
 	try {
-		let response = await fetch("localhost:5000/generate", {
+		console.debug("Sending request")
+		let response = await fetch("http://localhost:5000/generate", {
 			method: "POST",
 			body: JSON.stringify(data.value),
 			headers: headers
 		})
-		await forceDownload(await response.blob(), file)
+		console.debug("attempting download")
+		await forceDownload(await response.blob())
 	} catch (e) {
+		console.error("error occurred")
 		throw new Error(e)
 	}
 }
 
-async function forceDownload(blob, file) {
+async function forceDownload(blob) {
 	window.console.log(blob)
 	const a = document.createElement('a')
 	a.style.display = 'none'
 	document.body.appendChild(a)
 	a.href = URL.createObjectURL(blob)
-	a.setAttribute('download', file.source)
+	a.setAttribute('download', `${plugin_name.value}.lrplugin.zip`)
 	a.click()
 	window.URL.revokeObjectURL(a.href)
 	document.body.removeChild(a)
