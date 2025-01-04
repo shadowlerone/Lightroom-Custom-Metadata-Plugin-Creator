@@ -2,6 +2,8 @@ from pathlib import Path
 import os
 from enum import Enum, StrEnum, auto
 import json
+import logging
+
 
 with open(f"{os.path.dirname(__file__)}/template.lrplugin/CustomMetadata.lua") as fp:
 	CUSTOM_METADATA_TEMPLATE = fp.read()
@@ -213,17 +215,17 @@ class Plugin():
 			)
 		return plugin_base_path
 
-	def load(fp):
+	def load(fp:str):
 		with open(fp) as f:
 			data = json.load(f)
 
 		Plugin._l(data)
 		
 	
-	def loads(string):
+	def loads(string:str):
 		Plugin._l(json.loads(string))
 
-	def _l(data):
+	def _l(data: dict):
 		plugin = Plugin(data['name'])
 		for mf in data['mfields']:
 			field = Field(
