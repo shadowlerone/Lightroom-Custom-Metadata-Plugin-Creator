@@ -25,6 +25,35 @@ let data = ref({
 	'name': plugin_name,
 	'mfields': metadata_fields
 })
+
+async function downloadFile() {
+	let headers = {
+		// mode: 'cors',
+		cache: 'no-cache'
+	}
+	try {
+		let response = await fetch("localhost:5000/generate", {
+			method: "POST",
+			body: JSON.stringify(data.value),
+			headers: headers
+		})
+		await forceDownload(await response.blob(), file)
+	} catch (e) {
+		throw new Error(e)
+	}
+}
+
+async function forceDownload(blob, file) {
+	window.console.log(blob)
+	const a = document.createElement('a')
+	a.style.display = 'none'
+	document.body.appendChild(a)
+	a.href = URL.createObjectURL(blob)
+	a.setAttribute('download', file.source)
+	a.click()
+	window.URL.revokeObjectURL(a.href)
+	document.body.removeChild(a)
+}
 </script>
 
 <template>
@@ -32,8 +61,9 @@ let data = ref({
 	<h1 class="title is-1">Lightroom Metadata Plugin Generator</h1>
 
 	<form class="panel">
-		<h2 class="panel-heading"> {{ plugin_name }} 
-			<template v-if="advanced">(id: {{ full_plugin_id_string }})</template></h2>
+		<h2 class="panel-heading"> {{ plugin_name }}
+			<template v-if="advanced">(id: {{ full_plugin_id_string }})</template>
+		</h2>
 		<div class="panel-block">
 			<div class="control">
 				<div class="field">
@@ -63,7 +93,8 @@ let data = ref({
 					<!-- <h2 class="title is-2">Fields</h2> -->
 					<label class="label">Fields</label>
 					<template v-for="(_, index) in metadata_fields">
-						<MetaField :pluginId="full_plugin_id_string" :index="index" :advanced="advanced" v-model="metadata_fields" />
+						<MetaField :pluginId="full_plugin_id_string" :index="index" :advanced="advanced"
+							v-model="metadata_fields" />
 					</template>
 				</div>
 				<div class="field">
@@ -78,7 +109,7 @@ let data = ref({
 			<div class="control">
 				<div class="field is-grouped">
 					<div class="control">
-						<button class="button is-link">Submit</button>
+						<button @click.prevent="downloadFile()" class="button is-link">Generate</button>
 					</div>
 					<div class="control">
 						<button class="button is-link is-light">Cancel</button>
@@ -89,9 +120,9 @@ let data = ref({
 
 
 	</form>
-	<template v-if="advanced == true">
+	<!-- <template v-if="advanced == true">
 		{{ data }}
-	</template>
+	</template> -->
 
 </template>
 
