@@ -1,0 +1,92 @@
+{
+	"name": "Test Plugin",
+	"mfields": [
+		{
+			"id": "new_field_1",
+			"title": "New Field 1",
+			"searchable": true,
+			"browsable": true,
+			"dataType": "string",
+			"values": [],
+			"allowPluginToSetOtherValues": true
+		},
+		{
+			"id": "new_field_2",
+			"title": "New Field 2",
+			"searchable": true,
+			"browsable": true,
+			"dataType": "string",
+			"values": [],
+			"allowPluginToSetOtherValues": true
+		},
+		{
+			"id": "new_field_3",
+			"title": "New Field 3",
+			"searchable": true,
+			"browsable": true,
+			"dataType": "string",
+			"values": [],
+			"allowPluginToSetOtherValues": true
+		},
+		{
+			"id": "new_field_4",
+			"title": "New Field 4",
+			"searchable": true,
+			"browsable": true,
+			"dataType": "enum",
+			"values": [
+				{
+					"title": "Value 1",
+					"value": "value_1"
+				},
+				{
+					"title": "Value 2",
+					"value": "value_2"
+				},
+				{
+					"title": "Value 3",
+					"value": "value_3"
+				},
+				{
+					"title": "Value 4",
+					"value": "value_4"
+				},
+				{
+					"title": "Value 5",
+					"value": "value_5"
+				}
+			],
+			"allowPluginToSetOtherValues": true
+		},
+		{
+			"id": "new_field_5",
+			"title": "New Field 5",
+			"searchable": true,
+			"browsable": true,
+			"dataType": "enum",
+			"values": [
+				{
+					"title": "Value 1",
+					"value": "value_1"
+				},
+				{
+					"title": "Value 2",
+					"value": "value_2"
+				},
+				{
+					"title": "Value 3",
+					"value": "value_3"
+				},
+				{
+					"title": "Value 4",
+					"value": "value_4"
+				},
+				{
+					"title": "Value 5",
+					"value": "value_5"
+				}
+			],
+			"allowPluginToSetOtherValues": false
+		}
+	]
+}
