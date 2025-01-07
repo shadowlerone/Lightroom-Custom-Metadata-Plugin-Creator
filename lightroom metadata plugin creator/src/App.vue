@@ -178,6 +178,9 @@ async function forceDownload(blob) {
 .list-leave-active {
 	transition: all 250ms ease;
 }
+.list-enter-active {
+	transition-delay: 125ms;
+}
 
 .list-enter-from,
 .list-leave-to {
