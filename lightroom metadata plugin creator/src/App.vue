@@ -96,7 +96,7 @@ async function forceDownload(blob) {
 		<h2 class="panel-heading"> {{ plugin_name }}
 			<template v-if="advanced">(id: {{ full_plugin_id_string }})</template>
 		</h2>
-		<div class="panel-block">
+		<!-- <div class="panel-block">
 			<div class="control">
 				<div class="field">
 					<label class="checkbox">
@@ -105,7 +105,7 @@ async function forceDownload(blob) {
 					</label>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		<div class="panel-block">
 			<div class="control">
 				<div class="field">
