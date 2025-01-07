@@ -9,11 +9,11 @@ let advanced = ref(false)
 
 let plugin_name = ref('Test Plugin')
 
-let plugin_id = computed(() => {
+const plugin_id = computed(() => {
 	return to_id(plugin_name.value)
 })
 
-let full_plugin_id_string = computed(() => {
+const full_plugin_id_string = computed(() => {
 	return `shadowlerone.${plugin_id.value}.Metadata`
 })
 
@@ -34,28 +34,12 @@ let data = ref({
 	'mfields': metadata_fields
 })
 
-let error = computed(() => {
-	return metadata_fields.value.some(e => e.error)
-
+const error = computed(() => {
+	return metadata_fields.value.some(e => e.error == true)
 })
 
 function delete_field(index) {
-	// var temp = metadata_fields.value
-	// metadata_fields.value.splice(index, 1)
-	// for (i = 0; i<metadata_fields.value.length; i++){
-	// 	temp[i] = metadata_fields[i]
-	// }
-	// metadata_fields.value[index] = undefined
-	var j = 0
-	for (var i = 0; i < metadata_fields.value.length && j < metadata_fields.value.length; i++) {
-		if (i == index) {
-			j++
-		}
-		metadata_fields.value[i] = metadata_fields.value[i + j];
-	}
-	if (j > 0) {
-		metadata_fields.value.pop()
-	}
+	metadata_fields.value.splice(index, 1)
 }
 
 
@@ -97,11 +81,11 @@ async function forceDownload(blob) {
 
 	<h1 class="title is-1">Lightroom Metadata Plugin Generator</h1>
 
-	<form class="panel" :class="{ 'is-danger': error }">
+	<form class="panel" :class="{ 'is-danger': error == true }">
 		<h2 class="panel-heading"> {{ plugin_name }}
 			<template v-if="advanced">(id: {{ full_plugin_id_string }})</template>
 		</h2>
-		<!-- <div class="panel-block">
+		<div class="panel-block">
 			<div class="control">
 				<div class="field">
 					<label class="checkbox">
@@ -110,7 +94,7 @@ async function forceDownload(blob) {
 					</label>
 				</div>
 			</div>
-		</div> -->
+		</div>
 		<div class="panel-block">
 			<div class="control">
 				<div class="field">
@@ -118,7 +102,7 @@ async function forceDownload(blob) {
 						Plugin Name
 					</label>
 					<div class="control">
-						<input class="input" type="text" placeholder="Plugin Name" v-model="plugin_name">
+						<input class="input is-large" type="text" placeholder="Plugin Name" v-model="plugin_name">
 					</div>
 				</div>
 			</div>
@@ -141,13 +125,11 @@ async function forceDownload(blob) {
 			</div>
 		</div>
 
-
-
 		<div class="panel-block">
 			<div class="control">
 				<div class="field is-grouped">
 					<div class="control">
-						<button :disabled="error" @click.prevent="downloadFile()"
+						<button :disabled="error == true" @click.prevent="downloadFile()"
 							class="button is-link is-large">Generate
 							Plugin</button>
 					</div>
@@ -157,17 +139,7 @@ async function forceDownload(blob) {
 				</div>
 			</div>
 		</div>
-		<div class="panel-block" v-if="advanced">
-			<div class="control">
-				<pre><code>{{ JSON.stringify(data, null, 4) }}</code></pre>
-			</div>
-
-		</div>
-
 	</form>
-	<!-- <template v-if="advanced == true">
-		{{ data }}
-	</template> -->
 
 </template>
 
