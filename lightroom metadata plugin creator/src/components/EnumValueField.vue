@@ -1,28 +1,44 @@
 <template>
 	<div class="field is-grouped">
-		<label class="label">
-			Title
-			<div class="control is-expanded">
-				<input :class="{'is-danger':(title == '')}" required @change="update_title($event)" class="input" type="text" v-model="title" placeholder="Title">
-			</div>
-		</label>
-
-		<template v-if="advanced">
+		<div class="control">
 			<label class="label">
-				Value
+				Title
 				<div class="control is-expanded">
-					<input :class="{'is-danger':(value == '')}" required @change="update_value($event)" class="input" type="text" v-model="value" placeholder="value">
+					<input :class="{ 'is-danger': (title == '') }" required @change="update_title($event)" class="input"
+						type="text" v-model="title" placeholder="Title">
 				</div>
 			</label>
-		</template>
+		</div>
+
+
+		<div class="control">
+			<label class="label" v-if="advanced">
+				Value
+				<div class="control is-expanded">
+					<input :class="{ 'is-danger': (value == '') }" required @change="update_value($event)" class="input"
+						type="text" v-model="value" placeholder="value">
+				</div>
+			</label>
+		</div>
+
+
+		<div class="control">
+			<div class="control is-expanded">
+				<button type="button" class="button is-danger" @click.prevent="$emit('deleteValue')">Delete
+					Value</button>
+			</div>
+
+		</div>
+
+
 	</div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
-import {to_id } from '../utils.js'
+import { to_id } from '../utils.js'
 
-const props = defineProps({'index': Number, 'advanced': Boolean})
+const props = defineProps({ 'index': Number, 'advanced': Boolean })
 
 let id_default = ref(true)
 let title = ref(`Value ${props.index}`)
@@ -32,7 +48,7 @@ let model = defineModel({})
 let error = computed(() => {
 	return (value.value == "" || title.value == "")
 })
-let computed_id_string = computed(() =>{
+let computed_id_string = computed(() => {
 	return to_id(title.value)
 })
 model.value[props.index] = {
@@ -41,17 +57,17 @@ model.value[props.index] = {
 	'error': error
 }
 
-function update_title(){
+function update_title() {
 	title.value = title.value.trim()
 	update_from_title()
 }
-function update_from_title(event){
+function update_from_title(event) {
 	if (id_default.value == true) {
 		value.value = computed_id_string.value
 	}
 }
 
-function update_value(event){
+function update_value(event) {
 	value.value = to_id(value.value)
 	if (value.value == "") {
 		id_default.value = true
