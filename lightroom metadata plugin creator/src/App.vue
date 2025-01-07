@@ -1,9 +1,11 @@
 <script setup>
 import MetaField from "./components/MetaField.vue";
+// import DataDebug from "./components/dataDebug.vue";
 import { ref, reactive, computed } from 'vue';
 import { sanitize, to_id } from './utils.js'
+import DataDebug from "./components/dataDebug.vue";
 
-let advanced = ref(false)
+let advanced = ref(true)
 
 let plugin_name = ref('Test Plugin')
 
@@ -15,16 +17,45 @@ let full_plugin_id_string = computed(() => {
 	return `shadowlerone.${plugin_id.value}.Metadata`
 })
 
+let current_uuid = ref(0)
+let metadata_fields = ref([current_uuid.value++])
 function add_field() {
-	console.log("Not implemented")
+	console.log(current_uuid.value)
+	metadata_fields.value.push(current_uuid.value++)
+	console.log(metadata_fields.value[-1])
+	// console.log("Not implemented")
 }
 
-let metadata_fields = ref([''])
 // let metadata_field_count = ref(1)
 let data = ref({
 	'name': plugin_name,
 	'mfields': metadata_fields
 })
+
+let error = computed(() => {
+	return metadata_fields.value.some(e => e.error)
+
+})
+
+function delete_field(index) {
+	// var temp = metadata_fields.value
+	// metadata_fields.value.splice(index, 1)
+	// for (i = 0; i<metadata_fields.value.length; i++){
+	// 	temp[i] = metadata_fields[i]
+	// }
+	// metadata_fields.value[index] = undefined
+	var j=0
+	for (var i = 0; i < metadata_fields.value.length && j < metadata_fields.value.length; i++){
+		if (i==index){
+			j++
+		}
+		metadata_fields.value[i] = metadata_fields.value[i+j];
+	}
+	if (j > 0){
+		metadata_fields.value.pop()
+	}
+}
+
 
 async function downloadFile() {
 	let headers = {
@@ -64,7 +95,7 @@ async function forceDownload(blob) {
 
 	<h1 class="title is-1">Lightroom Metadata Plugin Generator</h1>
 
-	<form class="panel">
+	<form class="panel" :class="{ 'is-danger': error }">
 		<h2 class="panel-heading"> {{ plugin_name }}
 			<template v-if="advanced">(id: {{ full_plugin_id_string }})</template>
 		</h2>
@@ -96,13 +127,20 @@ async function forceDownload(blob) {
 				<div id="metadata-fields" class="field">
 					<!-- <h2 class="title is-2">Fields</h2> -->
 					<label class="label">Fields</label>
-					<template v-for="(_, index) in metadata_fields">
-						<MetaField :pluginId="full_plugin_id_string" :index="index" :advanced="advanced"
-							v-model="metadata_fields" />
-					</template>
+					<MetaField 
+						v-for="(v, index) in metadata_fields" 
+						:key="v.uuid"
+						:pluginId="full_plugin_id_string" 
+						:index="index" 
+						:advanced="advanced"
+						v-model="metadata_fields" 
+						@delete_field="delete_field" 
+						:uuid="current_uuid"
+					/>
+
 				</div>
 				<div class="field">
-					<button class="button" @click.prevent="metadata_fields.push('')">Add Metadata field</button>
+					<button class="button" @click.prevent="add_field()">Add Metadata field</button>
 				</div>
 			</div>
 		</div>
@@ -121,7 +159,12 @@ async function forceDownload(blob) {
 				</div>
 			</div>
 		</div>
+		<div class="panel-block" v-if="advanced">
+			<div class="control">
+				<pre><code>{{ JSON.stringify(data, null, 4) }}</code></pre>
+			</div>
 
+		</div>
 
 	</form>
 	<!-- <template v-if="advanced == true">
