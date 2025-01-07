@@ -18,12 +18,9 @@ let full_plugin_id_string = computed(() => {
 })
 
 let current_uuid = ref(0)
-let metadata_fields = ref([current_uuid.value++])
+let metadata_fields = ref([current_uuid.value])
 function add_field() {
-	console.log(current_uuid.value)
 	metadata_fields.value.push(current_uuid.value++)
-	console.log(metadata_fields.value[-1])
-	// console.log("Not implemented")
 }
 
 // let metadata_field_count = ref(1)
@@ -127,16 +124,19 @@ async function forceDownload(blob) {
 				<div id="metadata-fields" class="field">
 					<!-- <h2 class="title is-2">Fields</h2> -->
 					<label class="label">Fields</label>
-					<MetaField 
-						v-for="(v, index) in metadata_fields" 
+					<TransitionGroup name="list">
+						<MetaField 
+						v-for="(v, index) in metadata_fields"
 						:key="v.uuid"
 						:pluginId="full_plugin_id_string" 
 						:index="index" 
 						:advanced="advanced"
-						v-model="metadata_fields" 
-						@delete_field="delete_field" 
 						:uuid="current_uuid"
+						v-model="metadata_fields" 
+						@delete_field="delete_field"
 					/>
+					</TransitionGroup>
+					
 
 				</div>
 				<div class="field">
@@ -173,4 +173,22 @@ async function forceDownload(blob) {
 
 </template>
 
-<style scoped></style>
+<style scoped>
+.list-move, /* apply transition to moving elements */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+  position: absolute;
+}
+</style>
