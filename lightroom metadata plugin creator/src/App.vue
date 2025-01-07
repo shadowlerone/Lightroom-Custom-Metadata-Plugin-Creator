@@ -5,7 +5,7 @@ import { ref, reactive, computed } from 'vue';
 import { sanitize, to_id } from './utils.js'
 import DataDebug from "./components/dataDebug.vue";
 
-let advanced = ref(true)
+let advanced = ref(false)
 
 let plugin_name = ref('Test Plugin')
 
@@ -19,8 +19,13 @@ let full_plugin_id_string = computed(() => {
 
 let current_uuid = ref(0)
 let metadata_fields = ref([current_uuid.value])
+function reset() {
+	current_uuid.value = 0
+	metadata_fields.value = [current_uuid.value]
+}
 function add_field() {
-	metadata_fields.value.push(current_uuid.value++)
+	// metadata_fields.value.push('')
+	metadata_fields.value.push({'uuid': current_uuid.value++})
 }
 
 // let metadata_field_count = ref(1)
@@ -41,14 +46,14 @@ function delete_field(index) {
 	// 	temp[i] = metadata_fields[i]
 	// }
 	// metadata_fields.value[index] = undefined
-	var j=0
-	for (var i = 0; i < metadata_fields.value.length && j < metadata_fields.value.length; i++){
-		if (i==index){
+	var j = 0
+	for (var i = 0; i < metadata_fields.value.length && j < metadata_fields.value.length; i++) {
+		if (i == index) {
 			j++
 		}
-		metadata_fields.value[i] = metadata_fields.value[i+j];
+		metadata_fields.value[i] = metadata_fields.value[i + j];
 	}
-	if (j > 0){
+	if (j > 0) {
 		metadata_fields.value.pop()
 	}
 }
@@ -125,19 +130,10 @@ async function forceDownload(blob) {
 					<!-- <h2 class="title is-2">Fields</h2> -->
 					<label class="label">Fields</label>
 					<TransitionGroup name="list">
-						<MetaField 
-						v-for="(v, index) in metadata_fields"
-						:key="v.uuid"
-						:pluginId="full_plugin_id_string" 
-						:index="index" 
-						:advanced="advanced"
-						:uuid="current_uuid"
-						v-model="metadata_fields" 
-						@delete_field="delete_field"
-					/>
+						<MetaField v-for="(v, index) in metadata_fields" :key="v.uuid" :pluginId="full_plugin_id_string"
+							:index="index" :advanced="advanced" :uuid="current_uuid" v-model="metadata_fields"
+							@delete_field="delete_field" />
 					</TransitionGroup>
-					
-
 				</div>
 				<div class="field">
 					<button class="button" @click.prevent="add_field()">Add Metadata field</button>
@@ -151,10 +147,12 @@ async function forceDownload(blob) {
 			<div class="control">
 				<div class="field is-grouped">
 					<div class="control">
-						<button @click.prevent="downloadFile()" class="button is-link">Generate</button>
+						<button :disabled="error" @click.prevent="downloadFile()"
+							class="button is-link is-large">Generate
+							Plugin</button>
 					</div>
 					<div class="control">
-						<button class="button is-link is-light">Cancel</button>
+						<button @click.prevent="reset()" class="button is-danger is-light is-large">Reset</button>
 					</div>
 				</div>
 			</div>
@@ -174,21 +172,22 @@ async function forceDownload(blob) {
 </template>
 
 <style scoped>
-.list-move, /* apply transition to moving elements */
+.list-move,
+/* apply transition to moving elements */
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.5s ease;
+	transition: all 250ms ease;
 }
 
 .list-enter-from,
 .list-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
+	opacity: 0;
+	transform: translateX(30px);
 }
 
 /* ensure leaving items are taken out of layout flow so that moving
    animations can be calculated correctly. */
 .list-leave-active {
-  position: absolute;
+	position: absolute;
 }
 </style>

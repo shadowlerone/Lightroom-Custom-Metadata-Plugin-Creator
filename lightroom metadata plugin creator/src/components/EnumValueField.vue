@@ -3,7 +3,7 @@
 		<label class="label">
 			Title
 			<div class="control is-expanded">
-				<input :class="{'is-danger':(title == '')}" required @change="update_from_title($event)" class="input" type="text" v-model="title" placeholder="title">
+				<input :class="{'is-danger':(title == '')}" required @change="update_title($event)" class="input" type="text" v-model="title" placeholder="Title">
 			</div>
 		</label>
 
@@ -19,8 +19,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
-import { sanitize, to_id } from '../utils.js'
+import { ref, computed } from 'vue';
+import {to_id } from '../utils.js'
 
 const props = defineProps({'index': Number, 'advanced': Boolean})
 
@@ -41,11 +41,13 @@ model.value[props.index] = {
 	'error': error
 }
 
+function update_title(){
+	title.value = title.value.trim()
+	update_from_title()
+}
 function update_from_title(event){
 	if (id_default.value == true) {
 		value.value = computed_id_string.value
-	}
-	if (title.value == ""){
 	}
 }
 

@@ -85,16 +85,13 @@
 				</div>
 				<template v-if="advanced">
 					<div class="control">
-						{{ values }}
+						<pre><code>{{ JSON.stringify(values, null, 4) }}</code></pre>
 					</div>
 				</template>
 			</div>
 		</template>
 		<div class="panel-block">
-			<button class="button" @click.prevent="$emit('delete_field', index)">Delete</button>
-		</div>
-		<div class="panel-block" >
-			
+			<button class="button is-danger" @click.prevent="$emit('delete_field', index)">Delete field</button>
 		</div>
 	</div>
 </template>
@@ -174,7 +171,7 @@ function updateModel() {
 	error.value = model.value[props.index].error
 }
 
-
+// setModel()
 // onMounted(() => { setModel() })
 onBeforeMount(() => { setModel() })
 
@@ -210,4 +207,10 @@ function update_searchable() {
 }
 </script>
 
-<style scoped></style>
+<style>
+* {
+	transition-property: color, background-color;
+	transition-duration: 250ms;
+	transition-timing-function: ease-in-out;
+}
+</style>
