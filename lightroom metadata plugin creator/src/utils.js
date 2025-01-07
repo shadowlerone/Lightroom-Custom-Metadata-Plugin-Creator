@@ -1,5 +1,5 @@
 function sanitize(string) {
-	return string.replace(/[^A-z0-9]+/g, '_')
+	return string.replace(/\W+/g, ' ').trim().replace(/\s/g,'_')
 }
 
 function to_id(string) {
