@@ -1,33 +1,22 @@
 <template>
-	<div class="field is-grouped">
+	<div class="field has-addons">
 		<div class="control">
-			<label class="label">
-				Title
-				<div class="control is-expanded">
-					<input :class="{ 'is-danger': (title == '') }" required @change="update_title($event)" class="input"
-						type="text" v-model="title" placeholder="Title">
-				</div>
-			</label>
+			<div class="control is-expanded">
+				<input :class="{ 'is-danger': (title == '') }" required @change="update_title($event)" class="input"
+					type="text" v-model="title" placeholder="Title">
+			</div>
 		</div>
-
-
-		<div class="control">
-			<label class="label" v-if="advanced">
-				Value
-				<div class="control is-expanded">
+		<div class="control" v-if="advanced">
+				<div class="control">
 					<input :class="{ 'is-danger': (value == '') }" required @change="update_value($event)" class="input"
 						type="text" v-model="value" placeholder="value">
 				</div>
-			</label>
 		</div>
-
-
 		<div class="control">
-			<div class="control is-expanded">
+			<div class="control">
 				<button type="button" class="button is-danger" @click.prevent="$emit('deleteValue')">Delete
 					Value</button>
 			</div>
-
 		</div>
 
 
