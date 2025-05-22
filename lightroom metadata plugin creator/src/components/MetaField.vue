@@ -1,7 +1,7 @@
 <template>
 	<div class="metafield panel" :class="{ 'is-danger': error == true }">
 		<p class="panel-heading">{{ title_string || `New Field ${index + 1}` }}
-			<template v-if="advanced">
+			<template v-show="advanced">
 				({{ pluginId }}.{{ id_string }})
 			</template>
 		</p>
@@ -14,10 +14,10 @@
 							<input required @change="update_title()" class="input" type="text"
 								:class="{ 'is-danger': title_string === '' }" placeholder="title"
 								v-model="title_string">
-							<p class="help is-danger" v-if="title_string === ''">A blank title is not permitted</p>
+							<p class="help is-danger" v-show="title_string === ''">A blank title is not permitted</p>
 						</div>
 					</label>
-					<template v-if="advanced">
+					<template v-show="advanced">
 						<label class="label">
 							ID
 							<div class="control is-expanded">
@@ -27,7 +27,7 @@
 						</label>
 					</template>
 				</div>
-				<template v-if="advanced">
+				<template v-show="advanced">
 					<!-- searchable -->
 					<div class="field is-grouped">
 						<label class="checkbox">
@@ -58,9 +58,6 @@
 					</div>
 				</div>
 			</div>
-			<div class="control" v-if="advanced">
-				<!-- <pre><code>{{ JSON.stringify(model[index], null, 4) }}</code></pre> -->
-			</div>
 		</div>
 
 		<template v-if="dataType === 'enum'">
@@ -72,7 +69,7 @@
 							<input class="input" v-model="noneName">
 						</label>
 					</div>
-					<div class="field" v-if="advanced">
+					<div class="field" v-show="advanced">
 						<label>
 							<input type="checkbox" v-model="allowPluginToSetOtherValues" />
 							Allow plugin to set other values
@@ -85,7 +82,7 @@
 									<input class="input has-text-centered" readonly type="text" value="Title">
 								</div>
 							</div>
-							<div class="control" v-if="advanced">
+							<div class="control" v-show="advanced">
 								<div class="control">
 									<input class="input has-text-centered" readonly type="text" value="Value">
 								</div>
@@ -95,18 +92,13 @@
 							v-for="(v, i) in values.slice(1)" :key="v.uuid" @delete_value="delete_value"
 							:uuid="current_uuid" />
 						<button @click.prevent="add_value()" class="button">Add</button>
-						<p v-if="enum_value_empty" class="help is-danger">{{ advanced ? 'List' : 'Enum' }} has no values.
+						<p v-show="enum_value_empty" class="help is-danger">{{ advanced ? 'List' : 'Enum' }} has no values.
 						</p>
-						<p v-if="!enum_field_unique_titles" class="help is-danger">All Titles must be unique.</p>
-						<p v-if="!enum_field_unique_values && advanced" class="help is-danger">All values must be
+						<p v-show="!enum_field_unique_titles" class="help is-danger">All Titles must be unique.</p>
+						<p v-show="!enum_field_unique_values && advanced" class="help is-danger">All values must be
 							unique.</p>
 					</div>
 				</div>
-				<template v-if="advanced">
-					<div class="control">
-						<pre><code>{{ JSON.stringify(values, null, 4) }}</code></pre>
-					</div>
-				</template>
 			</div>
 		</template>
 		<div class="panel-block">
