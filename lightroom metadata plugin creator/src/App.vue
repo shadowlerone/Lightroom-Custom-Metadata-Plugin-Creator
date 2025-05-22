@@ -4,6 +4,7 @@ import MetaField from "./components/MetaField.vue";
 import { ref, reactive, computed } from 'vue';
 import { sanitize, to_id } from './utils.js'
 import DataDebug from "./components/dataDebug.vue";
+import Notification from "./components/Notification.vue";
 
 let advanced = ref(false)
 
@@ -56,11 +57,15 @@ async function downloadFile() {
 			body: JSON.stringify(data.value),
 			headers: headers
 		})
-		console.debug("attempting download")
-		await forceDownload(await response.blob())
+		if (response.status == 200){
+			console.debug("attempting download")
+			await forceDownload(await response.blob())
+		} else {
+			throw new Error("An error occurred while generating the plugin")
+		}
 	} catch (e) {
-		console.error("error occurred")
-		throw new Error(e)
+		// console.error("error occurred")
+		// throw new Error(e)
 	}
 }
 
@@ -80,12 +85,12 @@ async function forceDownload(blob) {
 <template>
 
 	<h1 class="title is-1">Lightroom Metadata Plugin Generator</h1>
-
+	<!-- <Notification class="is-danger" v-if="error == true">An error occurred</Notification> -->
 	<form class="panel" :class="{ 'is-danger': error == true }">
 		<h2 class="panel-heading"> {{ plugin_name }}
-			<template v-if="advanced">(id: {{ full_plugin_id_string }})</template>
+			<template v-show="advanced">(id: {{ full_plugin_id_string }})</template>
 		</h2>
-		<div class="panel-block">
+		<!-- <div class="panel-block">
 			<div class="control">
 				<div class="field">
 					<label class="checkbox">
@@ -94,7 +99,7 @@ async function forceDownload(blob) {
 					</label>
 				</div>
 			</div>
-		</div>
+		</div> -->
 		<div class="panel-block">
 			<div class="control">
 				<div class="field">
