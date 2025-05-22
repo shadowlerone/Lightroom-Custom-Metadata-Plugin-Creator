@@ -124,12 +124,12 @@ class Field():
 			'browsable': self.browsable,
 			'allowPluginToSetOtherValues': self.allowPluginToSetOtherValues
 		}
-		if self.dataType == 'enum':
+		if self.dataType == DataType.ENUM:
 			dictionary['values'] = self.values
 		return Field.dict_to_string(dictionary)
 	
 	def dict_to_string(d) -> str:
-		if d['dataType'] == 'enum':
+		if d['dataType'] == DataType.ENUM:
 			value_string = ", ".join([v.export() for v in d['values']])
 			return f"""
 {{
@@ -153,11 +153,13 @@ class Field():
 
 
 class MetadataFields():
-	fields:list[Field] = []
+	# fields:list[Field] = []
 	def __init__(self, schemaVersion:int = 1, metadataFields:list[Field] = []):
 		self.schemaVersion = schemaVersion
 		if metadataFields:
 			self.fields = metadataFields
+		else:
+			self.fields = []
 
 	def add_field(self, field:Field):
 		self.fields.append(field)
@@ -194,14 +196,9 @@ class Plugin():
 		# Write Info.lua
 		with open(plugin_base_path/"Info.lua", "w") as fp:
 			fp.write(INFO_LUA_TEMPLATE.format(name=self.name, id=self.id))
-
-
-
 		# Write CustomMetadata.lua
 		with open(plugin_base_path/"CustomMetadata.lua", "w") as fp:
-
 			fp.write(
-
 				CUSTOM_METADATA_TEMPLATE.format(
 					schemaVersion = self.MetadataFields.schemaVersion,
 					id = self.id,
@@ -225,11 +222,11 @@ class Plugin():
 		with open(fp) as f:
 			data = json.load(f)
 
-		Plugin._l(data)
+		return Plugin._l(data)
 		
 	
 	def loads(string:str):
-		Plugin._l(json.loads(string))
+		return Plugin._l(json.loads(string))
 
 	def _l(data: dict):
 		plugin = Plugin(data['name'])
