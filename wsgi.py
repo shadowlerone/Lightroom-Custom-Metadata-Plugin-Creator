@@ -47,7 +47,7 @@ def generate():
 		response = send_file(path_or_file=zip_name,as_attachment=True, download_name=zip_name)
 		try:
 			shutil.rmtree(fp)
-			os.remove(zip_name)
+			# os.remove(zip_name)
 		except:
 			pass
 			# logging.exception("Cleanup Failed")
@@ -55,10 +55,10 @@ def generate():
 		return response
 	except:
 		logging.exception("An Error Occurred")
-		return "An Error Occurred"
+		return "An Error Occurred", 500
 
 
 logging.basicConfig(level=logging.INFO)
 
-# if __name__ == '__main__':
-# 	run(host='localhost', port=8080, debug=True)
+if __name__ == '__main__':
+	app.run(host='localhost', port=5000, debug=True)
