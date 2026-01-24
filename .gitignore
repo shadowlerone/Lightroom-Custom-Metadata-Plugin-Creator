@@ -175,3 +175,5 @@ tmp
 .vscode/settings.json
 
 *.psd
+
+.DS_Store
