@@ -1,4 +1,5 @@
 
+from datetime import datetime
 import shutil
 import pathlib
 import logging
@@ -16,11 +17,9 @@ UPLOAD_FOLDER = WORK_DIR / "uploads"
 DOWNLOAD_FOLDER = WORK_DIR / "downloads"
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
-def cleanup(file) -> None:
-	try:
+def cleanup(*files) -> None:
+	for file in files:
 		shutil.rmtree(file)
-	except:
-		logging.exception("Cleanup Failed")
 
 
 app = Flask(__name__)
@@ -70,7 +69,7 @@ def generate():
 
 		response = send_file(path_or_file=zip_name,as_attachment=True, download_name=zip_name)
 		try:
-			t = Timer(60.0, cleanup, [fp])
+			t = Timer(60.0, cleanup, [folder])
 			t.start()
 			# shutil.rmtree(fp)
 			# os.remove(zip_name)
