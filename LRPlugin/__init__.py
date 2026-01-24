@@ -15,7 +15,7 @@ with open(f"{os.path.dirname(__file__)}/template.lrplugin/Tagset.lua") as fp:
 	TAGSET_TEMPLATE = fp.read()
 
 class Value():
-	def __init__(self, value: str, title: str= None):
+	def __init__(self, value: str|None, title: str|None= None):
 		self.value = value
 		if title:
 			self.title = title
@@ -45,13 +45,13 @@ class Field():
 	def __init__(
 			self, 
 			id:str, 
-			title:str = None, 
+			title:str|None = None, 
 			dataType:DataType = DataType.STRING, 
 			searchable:bool = True, 
 			browsable:bool = True, 
-			values:list[Value] = None, 
+			values:list[Value]|None = None, 
 			allowPluginToSetOtherValues = True
-		):
+		) -> None:
 		self.update_id(id)
 		self.update_title(title)
 		self.update_type(dataType)
@@ -73,19 +73,19 @@ class Field():
 		else:
 			return 0
 
-	def update_id(self, new_id:str):
+	def update_id(self, new_id:str) -> None:
 		self.id = new_id
 
-	def update_title(self, title:str = None):
+	def update_title(self, title:str|None = None) -> None:
 		if title:
 			self.title = title
 		else:
 			self.title = self.id
 
-	def update_searchable(self, s):
+	def update_searchable(self, s: bool) -> None:
 		self.searchable = s
 
-	def update_browsable(self, b):
+	def update_browsable(self, b) -> None:
 		if b:
 			if self.searchable:
 				self.browsable = b
@@ -95,7 +95,7 @@ class Field():
 		else:
 			self.searchable = b
 	
-	def add_value(self, title=None, value=None):
+	def add_value(self, title: str | None =None, value: str | None=None):
 		self.values.append(
 			Value(title=title, value=value)
 		)
@@ -105,11 +105,12 @@ class Field():
 			pass
 		# return len(self.values) - 1
 
-	def remove_value(self, index:int):
+	def remove_value(self, index:int) -> None:
 		self.values.pop(index)
 		pass
 
-	def update_value(self, index:int, title:str=None, value:str=None):
+	def update_value(self, index:int, title:str|None=None, value:str|None=None) -> None:
+		# TODO
 		if title:
 			pass
 		if value:
@@ -128,7 +129,8 @@ class Field():
 			dictionary['values'] = self.values
 		return Field.dict_to_string(dictionary)
 	
-	def dict_to_string(d) -> str:
+	@staticmethod
+	def dict_to_string(d: dict) -> str:
 		if d['dataType'] == DataType.ENUM:
 			value_string = ", ".join([v.export() for v in d['values']])
 			return f"""
@@ -154,33 +156,33 @@ class Field():
 
 class MetadataFields():
 	# fields:list[Field] = []
-	def __init__(self, schemaVersion:int = 1, metadataFields:list[Field] = []):
+	def __init__(self, schemaVersion:int = 1, metadataFields:list[Field] = []) -> None:
 		self.schemaVersion = schemaVersion
 		if metadataFields:
 			self.fields = metadataFields
 		else:
 			self.fields = []
 
-	def add_field(self, field:Field):
+	def add_field(self, field:Field) -> None:
 		self.fields.append(field)
 
-	def remove_field(self, index:int):
+	def remove_field(self, index:int) -> None:
 		self.fields.pop(index)
 
 	def __getitem__(self, key):
-		return self.field[key]
+		return self.fields[key]
 	
 	def __setitem__(self,key, newvalue):
-		self.field[key] = newvalue
+		self.fields[key] = newvalue
 
 	def export(self) -> str:
 		return ",".join([f.export() for f in self.fields])
 
 
 class Plugin():
-	def __init__(self, name:str, SdkVersion:int = 2, metadataProvider:str = "CustomMetadata.lua", mfields:MetadataFields = None):
+	def __init__(self, name:str, author:str = "shadowlerone", SdkVersion:int = 2, metadataProvider:str = "CustomMetadata.lua", mfields:MetadataFields|None = None):
 		self.name = name
-		self.id = f"shadowlerone.{self.name}.Metadata"
+		self.id = f"{author}.{self.name}.Metadata"
 		self.sdkversion = SdkVersion
 		self.MetadataProvider = metadataProvider
 		if mfields:
@@ -205,8 +207,6 @@ class Plugin():
 					customMetadata = self.MetadataFields.export()
 				)
 			)
-
-
 		# Write Tagset.lua
 		with open(plugin_base_path/"Tagset.lua", "w") as fp:
 			fp.write(
@@ -216,19 +216,21 @@ class Plugin():
 		if self.json and self.json != '':
 			with open(plugin_base_path/"data.json", "w") as fp:
 				fp.write(self.json)
-		return str(plugin_base_path)
+		return plugin_base_path
 
-	def load(fp:str):
+	@staticmethod
+	def load(fp:str|Path) -> "Plugin":
 		with open(fp) as f:
 			data = json.load(f)
 
 		return Plugin._l(data)
 		
-	
-	def loads(string:str):
+	@staticmethod
+	def loads(string:str) -> "Plugin":
 		return Plugin._l(json.loads(string))
 
-	def _l(data: dict):
+	@staticmethod
+	def _l(data: dict) -> "Plugin":
 		plugin = Plugin(data['name'])
 		for mf in data['mfields']:
 			field = Field(
