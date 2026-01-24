@@ -5,10 +5,23 @@ import logging
 from pathlib import Path
 import LRPlugin
 import os
-
+from threading import Timer
 # from bottle import route, run, post, request, static_file
 from flask import Flask, request, send_file
 from flask_cors import CORS, cross_origin
+
+
+WORK_DIR = Path("tmp")
+UPLOAD_FOLDER = WORK_DIR / "uploads"
+DOWNLOAD_FOLDER = WORK_DIR / "downloads"
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
+def cleanup(file) -> None:
+	try:
+		shutil.rmtree(file)
+	except:
+		logging.exception("Cleanup Failed")
+
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -18,6 +31,11 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 @app.route('/')
 def hello():
 	return "Hello World!"
+
+@app.route('/upload')
+def upload():
+
+	return "test"
 
 @app.post('/generate')
 @cross_origin()
@@ -34,9 +52,9 @@ def generate():
 		logging.info("Zipping plugin")
 		zip_name = f"{fp}.zip"
 		logging.info(f"fp: {fp}")
-		logging.info(f"tmp path: {Path("tmp") / Path(fp)}")
+		logging.info(f"tmp path: {DOWNLOAD_FOLDER / Path(fp)}")
 
-		shutil.move(Path(fp), Path("tmp") / Path(fp))
+		shutil.move(Path(fp), DOWNLOAD_FOLDER / Path(fp))
 
 		shutil.move(Path("tmp/tmp"), Path(fp))
 		if Path(zip_name).is_file():
@@ -46,7 +64,9 @@ def generate():
 
 		response = send_file(path_or_file=zip_name,as_attachment=True, download_name=zip_name)
 		try:
-			shutil.rmtree(fp)
+			t = Timer(60.0, cleanup, [fp])
+			t.start()
+			# shutil.rmtree(fp)
 			# os.remove(zip_name)
 		except:
 			pass
