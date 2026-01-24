@@ -173,3 +173,5 @@ cython_debug/
 
 tmp
 .vscode/settings.json
+
+*.psd
