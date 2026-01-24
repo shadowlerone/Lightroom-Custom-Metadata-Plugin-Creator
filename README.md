@@ -8,7 +8,7 @@ There's a [demo hosted here](https://lightroom.shadowlerone.ca).
 
 Fill out the form, click Generate Plugin, then install the plugin in Lightroom.
 
-Plugin Installation instructions: [written](plugin-installation.md), [video](https://www.adobe.com/ca/learn/lightroom-classic/web/lightroom-use-manage-plugins).
+Plugin Installation instructions: [written](docs/plugin-installation.md), [video](https://www.adobe.com/ca/learn/lightroom-classic/web/lightroom-use-manage-plugins).
 
 
 
