@@ -49,17 +49,23 @@ def generate():
 		plugin = LRPlugin.Plugin._l(data)
 		logging.info("Exporting plugin")
 		fp = plugin.export()
-		logging.info("Zipping plugin")
-		zip_name = f"{fp}.zip"
+		folder = DOWNLOAD_FOLDER / f"{fp.stem}-{datetime.now().strftime('%Y-%m-%d-%H%M%S')}"
+		logging.info(f"New folder: {folder}")
+		new_fp = f"{folder}{fp.suffix}"
+		zip_name = f"{folder}.zip"
+
+		logging.info(f"Creating directory {folder}")
+		os.makedirs(folder)
+
 		logging.info(f"fp: {fp}")
-		logging.info(f"tmp path: {DOWNLOAD_FOLDER / Path(fp)}")
 
-		shutil.move(Path(fp), DOWNLOAD_FOLDER / Path(fp))
+		logging.info(f"Moving lrplugin to { folder}")
+		shutil.move(Path(fp), folder)
 
-		shutil.move(Path("tmp/tmp"), Path(fp))
 		if Path(zip_name).is_file():
 			os.remove(zip_name)
-		shutil.make_archive(fp, 'zip', fp)
+		logging.info("Zipping plugin")
+		shutil.make_archive(folder, 'zip', folder)
 		logging.info("Sending Plugin")
 
 		response = send_file(path_or_file=zip_name,as_attachment=True, download_name=zip_name)
