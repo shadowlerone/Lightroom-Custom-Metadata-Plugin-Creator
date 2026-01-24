@@ -120,8 +120,8 @@ class Field():
 		:return: `1` if `dataType` == `DataType.ENUM` (for updating the UI), `0` otherwise.
 		:rtype: int
 		"""
-		if dataType not in DataType:
-			raise ValueError
+		# if dataType not in ["STRING", "URL", "ENU<"]:
+		# 	raise ValueError
 		self.dataType = dataType
 
 		if dataType == DataType.ENUM:
@@ -393,7 +393,7 @@ class Plugin():
 		:return: Description
 		:rtype: Path
 		"""
-		plugin_base_path = Path(f"tmp/{self.name}.lrplugin")
+		plugin_base_path = Path(f"{self.name}.lrplugin")
 		plugin_base_path.mkdir(parents=True, exist_ok=True)
 		# Write Info.lua
 		with open(plugin_base_path/"Info.lua", "w") as fp:
