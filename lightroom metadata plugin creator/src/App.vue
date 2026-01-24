@@ -52,7 +52,7 @@ async function downloadFile() {
 	}
 	try {
 		console.debug("Sending request")
-		let response = await fetch("http://localhost:5000/generate", {
+		let response = await fetch(import.meta.env.VITE_API_ENDPOINT, {
 			method: "POST",
 			body: JSON.stringify(data.value),
 			headers: headers
