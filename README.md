@@ -14,4 +14,31 @@ Plugin Installation instructions: [written](plugin-installation.md), [video](htt
 
 ## Notes about Lightroom Metadata Plugins
 
+Lightroom metadata plugins can officially have three kinds of fields:
+- string
+- URL
+- Enum
 
+### `String`
+
+Standard metadata field.
+Basis for the other fields.
+Has a `value` and a `title`. `value` is stored data. `title` is the human readable name of the field. `value` is user input, stored as a `string`.
+
+### `URL`
+
+Similar to String. This generator treats them the same, Lightroom differentiates them. `title` and `value` are the same as `String`.
+
+### `Enum`
+
+A choice between multiple values. Each `title` must be unique. At most one `value` can be `nil`. `title` is the name shown to users, `value` is the data stored by Lightroom. 
+
+## TODO
+
+### Main Feature Goals
+
+- Feature: Allow uploading and editing previously generated Metadata Plugin
+
+### Stretch Feature Goals
+
+- Plugin writes to XMP so data is accessible outside of Lightroom.
