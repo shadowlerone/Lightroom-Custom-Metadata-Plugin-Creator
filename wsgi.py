@@ -1,14 +1,26 @@
 
+from datetime import datetime
 import shutil
 import pathlib
 import logging
 from pathlib import Path
 import LRPlugin
 import os
-
+from threading import Timer
 # from bottle import route, run, post, request, static_file
 from flask import Flask, request, send_file
 from flask_cors import CORS, cross_origin
+
+
+WORK_DIR = Path("tmp")
+UPLOAD_FOLDER = WORK_DIR / "uploads"
+DOWNLOAD_FOLDER = WORK_DIR / "downloads"
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
+def cleanup(*files) -> None:
+	for file in files:
+		shutil.rmtree(file)
+
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -18,6 +30,11 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 @app.route('/')
 def hello():
 	return "Hello World!"
+
+@app.route('/upload')
+def upload():
+
+	return "test"
 
 @app.post('/generate')
 @cross_origin()
@@ -31,22 +48,30 @@ def generate():
 		plugin = LRPlugin.Plugin._l(data)
 		logging.info("Exporting plugin")
 		fp = plugin.export()
-		logging.info("Zipping plugin")
-		zip_name = f"{fp}.zip"
+		folder = DOWNLOAD_FOLDER / f"{fp.stem}-{datetime.now().strftime('%Y-%m-%d-%H%M%S')}"
+		logging.info(f"New folder: {folder}")
+		new_fp = f"{folder}{fp.suffix}"
+		zip_name = f"{folder}.zip"
+
+		logging.info(f"Creating directory {folder}")
+		os.makedirs(folder)
+
 		logging.info(f"fp: {fp}")
-		logging.info(f"tmp path: {Path("tmp") / Path(fp)}")
 
-		shutil.move(Path(fp), Path("tmp") / Path(fp))
+		logging.info(f"Moving lrplugin to { folder}")
+		shutil.move(Path(fp), folder)
 
-		shutil.move(Path("tmp/tmp"), Path(fp))
 		if Path(zip_name).is_file():
 			os.remove(zip_name)
-		shutil.make_archive(fp, 'zip', fp)
+		logging.info("Zipping plugin")
+		shutil.make_archive(folder, 'zip', folder)
 		logging.info("Sending Plugin")
 
 		response = send_file(path_or_file=zip_name,as_attachment=True, download_name=zip_name)
 		try:
-			shutil.rmtree(fp)
+			t = Timer(60.0, cleanup, [folder])
+			t.start()
+			# shutil.rmtree(fp)
 			# os.remove(zip_name)
 		except:
 			pass

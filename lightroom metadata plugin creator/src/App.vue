@@ -8,7 +8,7 @@ import Notification from "./components/Notification.vue";
 
 let advanced = ref(false)
 
-let plugin_name = ref('Test Plugin')
+let plugin_name = ref('New Plugin')
 
 const plugin_id = computed(() => {
 	return to_id(plugin_name.value)
@@ -52,7 +52,7 @@ async function downloadFile() {
 	}
 	try {
 		console.debug("Sending request")
-		let response = await fetch("http://localhost:5000/generate", {
+		let response = await fetch(`${import.meta.env.VITE_API_ENDPOINT}/generate`, {
 			method: "POST",
 			body: JSON.stringify(data.value),
 			headers: headers
