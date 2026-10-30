@@ -52,3 +52,8 @@ A choice between multiple values. Each `title` must be unique. At most one `valu
 - Feature: Plugin writes to XMP so data is accessible outside of Lightroom.
 - Maintenance: Finish writing tests
 - Maintenance: Finish writing documentation
+
+
+
+
+.test
